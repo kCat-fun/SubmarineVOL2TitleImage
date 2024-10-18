@@ -12,20 +12,21 @@ export default defineComponent({
     const p5Canvas = ref<HTMLDivElement | null>(null);
 
     // プロパティーの設定
-    // const GRID_SIZE: number = 1;
-    const w: number = 20;
+    // 420*142
+    const w: number = 5580 / 51.0;
     const cols: number = 51;
-    const rows: number = 33;
+    const rows: number = Math.ceil(1733.0/w);
     // マップの変数を空の配列に初期化
     const map: number[][] = [];
 
-    const width = w * cols; //Math.floor(cols / 2.0); + GRID_SIZE * Math.ceil(cols / 2.0);
-    const height = w * rows; //Math.floor(rows / 2.0); + GRID_SIZE * Math.ceil(rows / 2.0);;
+    const width = w * cols;
+    const height = w * rows;
+    let canvas;
 
     const sketch = (p: p5) => {
       p.setup = () => {
         // キャンバスのサイズを800x500に設定
-        p.createCanvas(width, height);
+        canvas = p.createCanvas(width, height);
         // 再描画無しに設定
         p.noLoop();
         // マップの初期化
@@ -45,22 +46,20 @@ export default defineComponent({
         p.background(0);
         p.noStroke();
         for (let i = 0; i < rows; i++) {
-          // const Y: number = (GRID_SIZE * Math.ceil(i / 2.0)) + (w * Math.floor(i / 2.0));
           for (let j = 0; j < cols; j++) {
-            // const X: number = (GRID_SIZE * Math.ceil(j / 2.0)) + (w * Math.floor(j / 2.0));
-            // if (map[i][j] == 1) {
-            // p.fill(255);
-            // p.rect(X, Y, GRID_SIZE, GRID_SIZE);
-            // } else {
             p.fill(
-              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 3.0)))) * 230,
-              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 6.0)))) * 230,
-              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 4.0)))) * 230
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 3.1)))) * 230,
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 6.1)))) * 230,
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 4.1)))) * 230
             );
             p.rect(j * w, i * w, w, w);
-            // }
+            p.fill(0);
+            p.circle(j * w, i * w, 2);
+            p.fill(0, 0, 0, 20);
+            p.triangle(j * w, i * w, j * w + w, i * w, j * w, i * w + w);
           }
         }
+        p.saveCanvas(canvas, 'mcbook-title-image', 'png');
       };
     };
 
