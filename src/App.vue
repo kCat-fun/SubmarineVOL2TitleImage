@@ -1,5 +1,5 @@
 <template>
-  <div ref="p5Canvas"></div>
+    <div ref="p5Canvas"></div>
 </template>
 
 <script lang="ts">
@@ -11,17 +11,23 @@ export default defineComponent({
   setup() {
     const p5Canvas = ref<HTMLDivElement | null>(null);
 
-    const SIZE: number = 20;
-    const GRID_SIZE: number = 5;
+    // プロパティーの設定
+    // 420*142
+    const w: number = (5580 / 5.0) / 51.0;
+    const cols: number = 51;
+    const rows: number = Math.ceil((1733.0 / 5.0) / w);
+    // マップの変数を空の配列に初期化
+    const map: number[][] = [];
 
-    const rows: number = 35;
-    const cols: number = 23;
-    const map: Array<number[]> = [];
+    const width = w * cols;
+    const height = w * rows;
+    let canvas: p5.Renderer;
 
     const sketch = (p: p5) => {
       p.setup = () => {
-        p.createCanvas(800, 500);
-        // p.colorMode(p.HSB, 255);
+        // キャンバスのサイズを800x500に設定
+        canvas = p.createCanvas(width, height);
+        // 再描画無しに設定
         p.noLoop();
 
         for (let i = 0; i < rows; i++) {
@@ -39,25 +45,18 @@ export default defineComponent({
       p.draw = () => {
         p.background(0);
         p.noStroke();
-
-        for (let i = 0; i < map.length; i++) {
-          for (let j = 0; j < map[i].length; j++) {
-            if (map[i][j] === 1) {
-              p.fill(255);
-            } else {
-              p.fill(50);
-            }
-            let w = SIZE;
-            let h = SIZE;
-            if (i % 2 == 0)
-              w = GRID_SIZE;
-            else if (j % 2 == 0)
-              h = GRID_SIZE;
-            p.rect(
-              SIZE * Math.floor(i / 2.0) + GRID_SIZE * Math.ceil(i / 2.0),
-              SIZE * Math.floor(j / 2.0) + GRID_SIZE * Math.ceil(j / 2.0),
-              w, h
+        for (let i = 0; i < rows; i++) {
+          for (let j = 0; j < cols; j++) {
+            p.fill(
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 3.1)))) * 230,
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 6.1)))) * 230,
+              (Math.abs(Math.sin((((i * j) / (cols * rows)) / 360.0) * 360 + ((Math.PI * 2) / 4.1)))) * 230
             );
+            p.rect(j * w, i * w, w, w);
+            p.fill(0);
+            p.circle(j * w, i * w, 2);
+            p.fill(0, 0, 0, 20);
+            p.triangle(j * w, i * w, j * w + w, i * w, j * w, i * w + w);
           }
         }
       };
@@ -75,5 +74,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped></style>
